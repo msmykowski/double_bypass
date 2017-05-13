@@ -29,7 +29,7 @@ In your test setup file (eg: `test/support/conn_case.exs`) define the services t
     service_two_bypass: "SERVICE_TWO_HOST"
   ]
  ```
-The keys are the ExUnit tag (to be used when initializing the bypass server for specific tests), and the values are the configurable ENV host to be mocked with the Bypass server address for the duration of the test. These can be in the form of a keyword list or map.
+The keys are the ExUnit tag (to be used when initializing the bypass server for specific tests), and the values are the Env variable setting the host value of the service. The Env variable value will be replaced with the Bypass server address for the duration of the test. These can be in the form of a keyword list or map.
 
 In your test setup, setup bypass:
 
@@ -44,9 +44,11 @@ In your test setup, setup bypass:
    end
 ```
 
-To use Double Bypass in a test case, tag the test with the bypass tag (defined in the test setup) of the service you want to be mocked. The presence of the tag initializes the Bypass server for that service for that one test. The tag values are the assertions to be made for that test. Double Bypass supports assertions on headers, path, query, method, and body for the request made to the local Bypass server. The presence of any of these values will trigger Double Bypass assert on the specified value compared to that of the incoming conn object.
+To use Double Bypass in a test case, tag the test with the bypass tag (defined in the test setup) of the service you want to be mocked. The presence of the tag initializes the Bypass server for that service for that one test. If the tag is not present, then the service will not be mocked. 
 
-response and status_code can be defined as well.  The presence of these values set the response coming from the Bypass server. By default Double Bypass will return status: 200, response: "".
+The tag values are the assertions to be made for that test. Double Bypass supports assertions on `headers`, `path`, `query`, `method` and `body` for the request made to the local Bypass server. The presence of any of these values will trigger Double Bypass to assert on the specified value compared to that of the conn object received by the Bypass server.
+
+`response` and `status_code` can be defined as well.  The presence of these values set the response coming from the Bypass server. By default Double Bypass will return status: 200, response: "".
 
 ```elixir
 @tag service_bypass: %{
@@ -65,7 +67,7 @@ response and status_code can be defined as well.  The presence of these values s
 end
 ```
 
-Double Bypass supports setting up multiple Bypass servers for a single test.  Simply include all bypass tags for the services to be mocked in the exunit tags of the test.
+Double Bypass supports setting up multiple Bypass servers for a single test.  Simply include all bypass tags for the services to be mocked in the ExUnit tags of the test.
 
 ```elixir
 @tag service_bypass: %{
