@@ -23,19 +23,13 @@ defmodule DoubleBypass do
 
   defp init_server(opts, host) do
     bypass = Bypass.open
-    url = System.get_env(host)
+    url = System.get_env(host) || ""
     System.put_env(host ,"http://localhost:#{bypass.port}")
     Bypass.expect(bypass, &DoubleBypass.Assertions.run(&1, opts))
     onexit(host, url)
     bypass
   end
 
-  defp onexit(env, nil) do
-    on_exit fn ->
-      System.put_env(env, "")
-      :ok
-    end
-  end
   defp onexit(env, url) do
     on_exit fn ->
       System.put_env(env, url)

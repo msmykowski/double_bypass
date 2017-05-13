@@ -15,13 +15,18 @@ defmodule DoubleBypass.Assertions do
       assert conn_headers[k] == v
     end)
   end
+  defp assert_on(conn, {:body, body}) when is_bitstring(body) do
+    assert conn
+          |> Plug.Conn.read_body
+          |> elem(1) == body
+  end
   defp assert_on(conn, {:body, body}) do
     assert conn
-      |> Plug.Conn.read_body
-      |> elem(1)
-      |> Poison.decode! == body
+          |> Plug.Conn.read_body
+          |> elem(1)
+          |> Poison.decode! == body
   end
-  defp assert_on(conn, _), do: :noop
+  defp assert_on(_conn, _), do: :noop
 
   defp send_resp(conn, params) do
     case params do
