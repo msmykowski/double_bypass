@@ -9,6 +9,7 @@ defmodule DoubleBypass.Mixfile do
      start_permanent: Mix.env == :prod,
      deps: deps(),
      package: package(),
+     description: description(),
      test_coverage: [tool: ExCoveralls]]
   end
 
@@ -19,6 +20,7 @@ defmodule DoubleBypass.Mixfile do
   defp deps do
     [
       {:bypass, "~> 0.5"},
+      {:ex_doc, ">= 0.0.0", only: :dev},
       {:excoveralls, "~> 0.6", only: :test},
       {:httpoison, "~> 0.11.1", only: :test},
       {:poison, "~> 2.0"}
@@ -38,6 +40,7 @@ defmodule DoubleBypass.Mixfile do
       name: :double_bypass,
       files: ["lib", "mix.exs", "README*"],
       maintainers: ["Michael Smykowski"],
+      licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/msmykowski/double_bypass"}
     ]
   end
