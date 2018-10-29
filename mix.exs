@@ -3,7 +3,7 @@ defmodule DoubleBypass.Mixfile do
 
   def project do
     [app: :double_bypass,
-     version: "0.0.1",
+     version: "0.0.2",
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -23,7 +23,7 @@ defmodule DoubleBypass.Mixfile do
       {:ex_doc, ">= 0.0.0", only: :dev},
       {:excoveralls, "~> 0.6", only: :test},
       {:httpoison, "~> 0.11.1", only: :test},
-      {:poison, "~> 2.0"}
+      {:poison, "~> 2.2 or ~> 3.0"}
     ]
   end
 
