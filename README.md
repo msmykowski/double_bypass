@@ -8,7 +8,7 @@ Add Double Bypass to your list of dependencies in mix.exs:
 
 ```elixir
 def deps do
-  [{:double_bypass, "~> 0.0.1", only: :test}]
+  [{:double_bypass, "~> 0.0.2", only: :test}]
 end
 ```
 
@@ -44,7 +44,7 @@ In your test setup, setup bypass:
    end
 ```
 
-To use Double Bypass in a test case, tag the test with the bypass tag (defined in the test setup) of the service you want to be mocked. The presence of the tag initializes the Bypass server for that service for that one test. If the tag is not present, then the service will not be mocked. 
+To use Double Bypass in a test case, tag the test with the bypass tag (defined in the test setup) of the service you want to be mocked. The presence of the tag initializes the Bypass server for that service for that one test. If the tag is not present, then the service will not be mocked.
 
 The tag values are the assertions to be made for that test. Double Bypass supports assertions on `headers`, `path`, `query`, `method` and `body` for the request made to the local Bypass server. The presence of any of these values will trigger Double Bypass to assert on the specified value compared to that of the conn object received by the Bypass server.
 
