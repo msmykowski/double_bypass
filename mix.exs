@@ -20,6 +20,7 @@ defmodule DoubleBypass.Mixfile do
   defp deps do
     [
       {:bypass, "~> 1.0"},
+      {:credo, "~> 1.0", only: :dev},
       {:ex_doc, ">= 0.0.0", only: :dev},
       {:excoveralls, "~> 0.6", only: :test},
       {:httpoison, "~> 0.11.1", only: :test},

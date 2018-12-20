@@ -1,4 +1,7 @@
 defmodule DoubleBypass do
+  @moduledoc """
+  Responsible for initializing and configuring the Bypass servers.
+  """
   use ExUnit.CaseTemplate
 
   def setup_bypass?(tags, bypass_tags) do
@@ -24,7 +27,7 @@ defmodule DoubleBypass do
   defp init_server(opts, host) do
     bypass = Bypass.open
     url = System.get_env(host) || ""
-    System.put_env(host ,"http://localhost:#{bypass.port}")
+    System.put_env(host, "http://localhost:#{bypass.port}")
     Bypass.expect(bypass, &DoubleBypass.Assertions.run(&1, opts))
     onexit(host, url)
     bypass
