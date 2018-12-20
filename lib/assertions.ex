@@ -2,7 +2,7 @@ defmodule DoubleBypass.Assertions do
   use ExUnit.CaseTemplate
 
   def run(conn, params) do
-    Enum.map(params, &assert_on(conn, &1))
+    Enum.each(params, &assert_on(conn, &1))
     send_resp(conn, params)
   end
 
