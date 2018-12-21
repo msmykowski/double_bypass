@@ -14,7 +14,7 @@ defmodule DoubleBypass.Assertions do
   defp assert_on(conn, {:method, method}), do: assert conn.method == method
   defp assert_on(conn, {:headers, headers}) do
     conn_headers = conn.req_headers |> Enum.into(%{})
-    Enum.map(headers, fn({k, v}) ->
+    Enum.each(headers, fn({k, v}) ->
       assert conn_headers[k] == v
     end)
   end
