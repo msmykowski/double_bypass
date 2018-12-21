@@ -10,4 +10,4 @@ jobs:
       - run: mix local.rebar --force
       - run: mix deps.get
       - run: mix credo --strict
-      - run: mix test
+      - run: MIX_ENV=test mix coveralls
