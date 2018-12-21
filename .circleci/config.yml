@@ -1,0 +1,13 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/elixir:1.7.3
+    working_directory: ~/app
+    steps:
+      - checkout
+      - run: mix local.hex --force
+      - run: mix local.rebar --force
+      - run: mix deps.get
+      - run: mix credo --strict
+      - run: MIX_ENV=test mix coveralls

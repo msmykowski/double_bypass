@@ -20,10 +20,11 @@ defmodule DoubleBypass.Mixfile do
   defp deps do
     [
       {:bypass, "~> 1.0"},
-      {:ex_doc, ">= 0.0.0", only: :dev},
-      {:excoveralls, "~> 0.6", only: :test},
-      {:httpoison, "~> 0.11.1", only: :test},
-      {:poison, "~> 2.2 or ~> 3.0"}
+      {:credo, "~> 1.0", only: :dev},
+      {:ex_doc, ">= 0.19.1", only: :dev},
+      {:excoveralls, "~> 0.10", only: :test},
+      {:httpoison, "~> 1.5", only: :test},
+      {:poison, "~> 2.2 or ~> 3.0 or ~> 4.0"}
     ]
   end
 

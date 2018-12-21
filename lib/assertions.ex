@@ -1,4 +1,7 @@
 defmodule DoubleBypass.Assertions do
+  @moduledoc """
+  Responsible for test assertion logic.
+  """
   use ExUnit.CaseTemplate
 
   def run(conn, params) do
