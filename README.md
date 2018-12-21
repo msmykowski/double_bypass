@@ -8,7 +8,7 @@ Add Double Bypass to your list of dependencies in mix.exs:
 
 ```elixir
 def deps do
-  [{:double_bypass, "~> 0.0.2", only: :test}]
+  [{:double_bypass, "~> 0.0.3", only: :test}]
 end
 ```
 
