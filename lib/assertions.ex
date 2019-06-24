@@ -22,14 +22,6 @@ defmodule DoubleBypass.Assertions do
     end)
   end
 
-  defp assert_on(conn, {:resp_headers, resp_headers}) do
-    conn_headers = conn.resp_headers |> Enum.into(%{})
-
-    Enum.map(resp_headers, fn {k, v} ->
-      assert conn_headers[k] == v
-    end)
-  end
-
   defp assert_on(conn, {:body, body}) when is_bitstring(body) do
     assert conn
            |> Plug.Conn.read_body()
@@ -44,6 +36,14 @@ defmodule DoubleBypass.Assertions do
   end
 
   defp assert_on(_conn, _), do: :noop
+
+  defp send_resp(conn, %{resp_headers: resp_headers} = params) do
+    params = Map.delete(params, :resp_headers)
+
+    conn
+    |> put_resp_headers(resp_headers)
+    |> send_resp(params)
+  end
 
   defp send_resp(conn, params) do
     case params do
@@ -65,5 +65,12 @@ defmodule DoubleBypass.Assertions do
       _ ->
         Plug.Conn.resp(conn, 200, "")
     end
+  end
+
+  defp put_resp_headers(conn, resp_headers) do
+    Enum.reduce(resp_headers, conn, fn {key, value}, conn ->
+      conn
+      |> Plug.Conn.put_resp_header(key, value)
+    end)
   end
 end
