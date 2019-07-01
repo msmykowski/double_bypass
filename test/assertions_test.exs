@@ -10,6 +10,7 @@ defmodule DoubleBypass.AssertionsTest do
   @json_resp_body %{"body" => "body"}
   @string_resp_body "body"
   @status_code 204
+  @resp_headers [{"location", "http://localhost"}]
 
   setup_all do
     body = @json_resp_body |> Poison.encode!
@@ -68,6 +69,12 @@ defmodule DoubleBypass.AssertionsTest do
   test "test status code", %{conn: conn} do
     resp = DoubleBypass.Assertions.run(conn, %{status_code: @status_code})
     assert resp.status == @status_code
+  end
+
+  test "test response headers code", %{conn: conn} do
+    [header] = @resp_headers
+    resp = DoubleBypass.Assertions.run(conn, %{resp_headers: @resp_headers})
+    assert Enum.member?(resp.resp_headers, header)
   end
 
   test "test status code and json response", %{conn: conn} do
