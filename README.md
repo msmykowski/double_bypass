@@ -48,7 +48,7 @@ To use Double Bypass in a test case, tag the test with the bypass tag (defined i
 
 The tag values are the assertions to be made for that test. Double Bypass supports assertions on `headers`, `path`, `query`, `method` and `body` for the request made to the local Bypass server. The presence of any of these values will trigger Double Bypass to assert on the specified value compared to that of the conn object received by the Bypass server.
 
-`response` and `status_code` can be defined as well.  The presence of these values set the response coming from the Bypass server. By default Double Bypass will return status: 200, response: "".
+`response`, `status_code` and `resp_headers` can be defined as well.  The presence of these values set the response coming from the Bypass server. By default Double Bypass will return status: 200, response: "".
 
 ```elixir
 @tag service_bypass: %{
@@ -57,7 +57,8 @@ The tag values are the assertions to be made for that test. Double Bypass suppor
     method: "POST",
     body: %{request: "body"},
     response: %{response: "body"}
-    status_code: 201
+    status_code: 201,
+    resp_headers: [{"content-type", "application/json"}]
   }
   test "POST /path", %{conn: conn} do
     resp = post(conn, "/path", %{request: "body"})
@@ -76,7 +77,8 @@ Double Bypass supports setting up multiple Bypass servers for a single test.  Si
     method: "POST",
     body: %{request: "body"},
     response: %{response: "body"}
-    status_code: 201
+    status_code: 201,
+    resp_headers: [{"content-type", "application/json"}]
   }, service_two_bypass: %{
     path: "/path/two",
     method: "GET",
@@ -100,7 +102,8 @@ Double Bypass returns the Bypass object, so it can be used when performing more 
     method: "POST",
     body: %{request: "body"},
     response: %{response: "body"}
-    status_code: 201
+    status_code: 201,
+    resp_headers: [{"content-type", "application/json"}]
   }, service_two_bypass: %{
     path: "/path/two",
     method: "GET",
