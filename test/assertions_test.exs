@@ -13,7 +13,7 @@ defmodule DoubleBypass.AssertionsTest do
   @resp_headers [{"location", "http://localhost"}]
 
   setup_all do
-    body = @json_resp_body |> Poison.encode!
+    body = @json_resp_body |> Jason.encode!
     conn = conn(:post, @path <> "?query=query", body)
     |> put_req_header("content-type", "application/json")
     |> put_req_header("keep-alive", "timeout=5")
@@ -58,7 +58,7 @@ defmodule DoubleBypass.AssertionsTest do
 
   test "test json response", %{conn: conn} do
     resp = DoubleBypass.Assertions.run(conn, %{response: @json_resp_body})
-    assert resp.resp_body |> Poison.decode! == @json_resp_body
+    assert resp.resp_body |> Jason.decode! == @json_resp_body
   end
 
   test "test string response", %{conn: conn} do
@@ -84,6 +84,6 @@ defmodule DoubleBypass.AssertionsTest do
     })
 
     assert resp.status == @status_code
-    assert resp.resp_body |> Poison.decode! == @json_resp_body
+    assert resp.resp_body |> Jason.decode! == @json_resp_body
   end
 end
