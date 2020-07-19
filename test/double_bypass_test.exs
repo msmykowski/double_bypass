@@ -13,7 +13,7 @@ defmodule DoubleBypass.Config do
   end
 
   def put(config, value) when is_atom(config) do
-    Agent.update(__MODULE__, & Map.put(&1, config, value))
+    Agent.update(__MODULE__, &Map.put(&1, config, value))
   end
 
   def get(key) when is_atom(key) do
@@ -33,16 +33,16 @@ defmodule DoubleBypassTest do
   use ExUnit.Case
 
   @tags %{
-    service_one_bypass: %{test: "params"}, 
-    service_two_bypass: %{test: "params"}, 
+    service_one_bypass: %{test: "params"},
+    service_two_bypass: %{test: "params"},
     service_three_bypass: %{test: "params"}
   }
 
   defp bypass_tags do
     [
-      service_one_bypass: "SERVICE_HOST", 
+      service_one_bypass: "SERVICE_HOST",
       service_two_bypass: %{
-        setter: & DoubleBypass.Config.put(:service_two_host, &1), 
+        setter: &DoubleBypass.Config.put(:service_two_host, &1),
         getter: fn -> DoubleBypass.Config.get(:service_two_host) end
       },
       service_three_bypass: %{key: :service_three_host}
@@ -56,15 +56,18 @@ defmodule DoubleBypassTest do
 
   test "setup_bypass?" do
     assert DoubleBypass.setup_bypass?(@tags, bypass_tags())
-    refute DoubleBypass.setup_bypass?(@tags, [service_four_bypass: "SERVICE_FOUR_HOST"])
+    refute DoubleBypass.setup_bypass?(@tags, service_four_bypass: "SERVICE_FOUR_HOST")
   end
 
   test "setup_bypass" do
-    DoubleBypass.setup_bypass(@tags, bypass_tags(), %{setter: &DoubleBypass.Config.put/2, getter: &DoubleBypass.Config.get/1})
+    DoubleBypass.setup_bypass(@tags, bypass_tags(), %{
+      setter: &DoubleBypass.Config.put/2,
+      getter: &DoubleBypass.Config.get/1
+    })
 
-    HTTPoison.start
-    HTTPoison.get! System.get_env("SERVICE_HOST")
-    HTTPoison.get! DoubleBypass.Config.get(:service_two_host)
-    HTTPoison.get! DoubleBypass.Config.get(:service_three_host)
+    HTTPoison.start()
+    HTTPoison.get!(System.get_env("SERVICE_HOST"))
+    HTTPoison.get!(DoubleBypass.Config.get(:service_two_host))
+    HTTPoison.get!(DoubleBypass.Config.get(:service_three_host))
   end
 end

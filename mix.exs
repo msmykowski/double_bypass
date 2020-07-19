@@ -2,15 +2,17 @@ defmodule DoubleBypass.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :double_bypass,
-     version: "0.0.5",
-     elixir:  "~> 1.10",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     deps: deps(),
-     package: package(),
-     description: description(),
-     test_coverage: [tool: ExCoveralls]]
+    [
+      app: :double_bypass,
+      version: "0.0.5",
+      elixir: "~> 1.10",
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
+      deps: deps(),
+      package: package(),
+      description: description(),
+      test_coverage: [tool: ExCoveralls]
+    ]
   end
 
   def application do
