@@ -32,7 +32,7 @@ defmodule DoubleBypass.Assertions do
     assert conn
            |> Plug.Conn.read_body()
            |> elem(1)
-           |> Poison.decode!() == body
+           |> Jason.decode!() == body
   end
 
   defp assert_on(_conn, _), do: :noop
@@ -51,7 +51,7 @@ defmodule DoubleBypass.Assertions do
         Plug.Conn.resp(conn, status_code, response)
 
       %{response: response, status_code: status_code} ->
-        Plug.Conn.resp(conn, status_code, Poison.encode!(response))
+        Plug.Conn.resp(conn, status_code, Jason.encode!(response))
 
       %{status_code: status_code} ->
         Plug.Conn.resp(conn, status_code, "")
@@ -60,7 +60,7 @@ defmodule DoubleBypass.Assertions do
         Plug.Conn.resp(conn, 200, response)
 
       %{response: response} ->
-        Plug.Conn.resp(conn, 200, Poison.encode!(response))
+        Plug.Conn.resp(conn, 200, Jason.encode!(response))
 
       _ ->
         Plug.Conn.resp(conn, 200, "")

@@ -8,39 +8,31 @@ Add Double Bypass to your list of dependencies in mix.exs:
 
 ```elixir
 def deps do
-  [{:double_bypass, "~> 0.0.4", only: :test}]
+  [{:double_bypass, "~> 0.0.5", only: :test}]
 end
 ```
 
 ## Usage
 
-Start Bypass in your `test/test_helper.exs` file to make it available in tests:
-
-```elixir
-ExUnit.start
-Application.ensure_all_started(:bypass)
-```
-
 In your test setup file (eg: `test/support/conn_case.exs`) define the services to be bypassed by local bypass services.
 
 ```elixir
   @bypass_tags [
-    service_bypass: "SERVICE_HOST",
-    service_two_bypass: "SERVICE_TWO_HOST"
+    service_bypass: %{getter: fn -> System.get_env("SERVICE_HOST") end, setter: & System.put_env("SERVICE_HOST", &1)},
+    service_two_bypass: %{key: "SERVICE_TWO_HOST"},
   ]
  ```
-The keys are the ExUnit tag (to be used when initializing the bypass server for specific tests), and the values are the Env variable setting the host value of the service. The Env variable value will be replaced with the Bypass server address for the duration of the test. These can be in the form of a keyword list or map.
+
+The keys are the ExUnit tag (to be used when initializing the bypass server for specific tests), and the values are setter and getter functions used to update the configuration to point to the local Bypass server. Alternatively, you can define a global getter and setter function passed as options to the DoubleBypass.setup_bypass/3 and specify a key to be passed as the first argument to the global setter and getter.
 
 In your test setup, setup bypass:
 
 ```elixir
    defp setup_test(tags) do
-    if DoubleBypass.setup_bypass?(tags, @bypass_tags) do
-      {:ok,
-        DoubleBypass.setup_bypass(tags, @bypass_tags)
-        |> Map.put(:conn, Phoenix.ConnTest.build_conn())
-      }
-    end
+    {:ok,
+      DoubleBypass.setup_bypass(tags, @bypass_tags, %{setter: &System.put_env/2, getter: &System.get_env/1})
+      |> Map.put(:conn, Phoenix.ConnTest.build_conn())
+    }
    end
 ```
 
