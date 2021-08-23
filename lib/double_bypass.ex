@@ -58,13 +58,34 @@ defmodule DoubleBypass do
     end
   end
 
+  def add_expectation(bypass, key, expectations, agent) do
+    path = key[:path] || "/"
+    method = key[:method] || "GET"
+
+    Agent.update(agent, fn map -> Map.put(map, path, :queue.from_list(expectations)) end)
+
+    Bypass.expect(bypass, method, path, fn conn ->
+      queue = Agent.get(agent, fn map -> map[path] end)
+      {{:value, val}, queue} = :queue.out(queue)
+      queue = :queue.in(val, queue)
+
+      Agent.update(agent, fn map -> Map.put(map, path, queue) end)
+      DoubleBypass.Assertions.run(conn, val)
+    end)
+  end
+
   defp init_server(opts, %{getter: getter, setter: setter}) do
     bypass = Bypass.open()
     original_config = getter.()
     setter.("http://localhost:#{bypass.port}")
 
-    if map_size(opts) > 0 do
-      Bypass.expect(bypass, &DoubleBypass.Assertions.run(&1, opts))
+    if is_list(opts) && !Enum.empty?(opts) do
+      {:ok, agent} = Agent.start_link(fn -> %{} end)
+
+      opts
+      |> Enum.filter(&(map_size(&1) > 0))
+      |> Enum.group_by(fn params -> Map.take(params, [:path, :method]) end)
+      |> Enum.each(fn {key, assertions} -> add_expectation(bypass, key, assertions, agent) end)
     end
 
     onexit(setter, original_config)

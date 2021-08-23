@@ -3,14 +3,31 @@ defmodule DoubleBypass.Assertions do
   Responsible for test assertion logic.
   """
   use ExUnit.CaseTemplate
+  require Logger
 
   def run(conn, params) do
-    Enum.each(params, &assert_on(conn, &1))
-    send_resp(conn, params)
+    conn = Plug.Conn.fetch_query_params(conn)
+
+    if is_nil(params) do
+      Logger.error("no bypass for #{conn.request_path}")
+      raise "no bypass for #{conn.request_path}"
+    else
+      try do
+        Enum.each(params, &assert_on(conn, &1))
+        send_resp(conn, params)
+      rescue
+        e ->
+          raise e
+      end
+    end
   end
 
   defp assert_on(conn, {:path, path}), do: assert(conn.request_path == path)
-  defp assert_on(conn, {:query, query}), do: assert(conn.query_string == query)
+
+  defp assert_on(conn, {:query, query}) when is_bitstring(query),
+    do: assert(conn.query_string == query)
+
+  defp assert_on(conn, {:query, query}) when is_map(query), do: assert(conn.query_params == query)
   defp assert_on(conn, {:method, method}), do: assert(conn.method == method)
   defp assert_on(conn, {:headers, headers}), do: assert_on(conn, {:req_headers, headers})
 

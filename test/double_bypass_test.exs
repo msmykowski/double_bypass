@@ -33,9 +33,9 @@ defmodule DoubleBypassTest do
   use ExUnit.Case
 
   @tags %{
-    service_one_bypass: %{test: "params"},
-    service_two_bypass: %{test: "params"},
-    service_three_bypass: %{test: "params"}
+    service_one_bypass: [%{test: "params"}],
+    service_two_bypass: [%{test: "params"}],
+    service_three_bypass: [%{test: "params"}]
   }
 
   defp bypass_tags do
