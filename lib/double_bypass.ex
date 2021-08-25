@@ -58,9 +58,9 @@ defmodule DoubleBypass do
     end
   end
 
-  def add_expectation(bypass, key, expectations, agent) do
-    path = key[:path] || "/"
-    method = key[:method] || "GET"
+  def add_expectation(bypass, {path, method}, expectations, agent) do
+    path = path || "/"
+    method = method || "GET"
 
     Agent.update(agent, fn map -> Map.put(map, path, :queue.from_list(expectations)) end)
 
@@ -70,6 +70,7 @@ defmodule DoubleBypass do
       queue = :queue.in(val, queue)
 
       Agent.update(agent, fn map -> Map.put(map, path, queue) end)
+
       DoubleBypass.Assertions.run(conn, val)
     end)
   end
@@ -84,7 +85,7 @@ defmodule DoubleBypass do
 
       opts
       |> Enum.filter(&(map_size(&1) > 0))
-      |> Enum.group_by(fn params -> Map.take(params, [:path, :method]) end)
+      |> Enum.group_by(fn params -> {params[:path], params[:method]} end)
       |> Enum.each(fn {key, assertions} -> add_expectation(bypass, key, assertions, agent) end)
     end
 
