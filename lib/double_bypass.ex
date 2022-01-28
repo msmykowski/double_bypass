@@ -62,14 +62,15 @@ defmodule DoubleBypass do
     path = path || "/"
     method = method || "GET"
 
-    Agent.update(agent, fn map -> Map.put(map, path, :queue.from_list(expectations)) end)
+    Agent.update(agent, fn map -> Map.put(map, {path, method}, :queue.from_list(expectations)) end)
 
     Bypass.expect(bypass, method, path, fn conn ->
-      queue = Agent.get(agent, fn map -> map[path] end)
+      queue = Agent.get(agent, fn map -> map[{path, method}] end)
+
       {{:value, val}, queue} = :queue.out(queue)
       queue = :queue.in(val, queue)
 
-      Agent.update(agent, fn map -> Map.put(map, path, queue) end)
+      Agent.update(agent, fn map -> Map.put(map, {path, method}, queue) end)
 
       DoubleBypass.Assertions.run(conn, val)
     end)
