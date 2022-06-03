@@ -16,13 +16,12 @@ defmodule DoubleBypass.Mixfile do
   end
 
   def application do
-    [applications: [:bypass, :logger]]
+    [extra_applications: [:logger]]
   end
 
   defp deps do
     [
-      {:bypass, "~> 1.0"},
-      {:credo, "~> 1.4", only: :dev},
+      {:bypass, "~> 1.0 or ~> 2.0"},
       {:ex_doc, "~> 0.22.1", only: :dev},
       {:excoveralls, "~> 0.13", only: :test},
       {:httpoison, "~> 1.7", only: :test},
